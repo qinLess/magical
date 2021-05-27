@@ -1,0 +1,46 @@
+# -*- coding: utf-8 -*-
+"""
+-------------------------------------------------
+    Author: qinLess
+    File: pipeline.py
+    Time: ${create_time}
+-------------------------------------------------
+    Change Activity: ${create_time}
+-------------------------------------------------
+    Desc:
+"""
+
+from magical.sync_spider.extends_module.base_module.pipeline import PipelineMiddleware
+
+
+# -------------------------------------------------spider pipeline-------------------------------------------------
+
+
+class ${SpiderName}Pipeline(PipelineMiddleware):
+
+    def __init__(self, spider):
+        super().__init__(spider)
+
+    def process_item(self, item, **kwargs):
+        """数据处理
+
+        Args:
+            item  : 要处理的数据
+            kwargs:
+                table_name: 表名称
+                replace   : True or False (mysql 数据库使用)
+                ignore    : True or False (mysql 数据库使用)
+                indexes   : 数据库表唯一索引字段 (PostGreSql 数据库使用)
+
+        Return:
+            返回的数据类型如果不等于 type(item) 则不会调用后面的 pipeline process_item 函数
+        """
+        return item
+
+    def process_exception(self, item, exception, **kwargs):
+
+        if isinstance(exception, Exception):
+            self.logger.error(f'${SpiderName}Pipeline - exception: {exception}')
+            return None
+
+        return exception
