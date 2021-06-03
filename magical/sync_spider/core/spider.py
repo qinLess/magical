@@ -41,6 +41,7 @@ class InitSpider(object):
         self.name = kwargs.get('name', self.name)
         self.custom_setting = kwargs.get('custom_setting', {})
         self.settings_path = kwargs.get('settings_path')
+        self.common_settings_path = kwargs.get('common_settings_path')
 
         self.__load_settings(self.custom_setting)
 
@@ -62,8 +63,11 @@ class InitSpider(object):
         self.settings = Settings()
         self.settings.set_dict(custom_setting)
         if self.settings_path:
-            custom_settings = importlib.import_module(self.settings_path)
-            self.settings.load_config(custom_settings)
+            try:
+                self.settings.load_config(importlib.import_module(self.common_settings_path))
+            except Exception as e:
+                pass
+            self.settings.load_config(importlib.import_module(self.settings_path))
 
     def __load_dbs(self):
         self.dbs = InitDatabase(self).dbs
@@ -146,6 +150,7 @@ class BaseSyncSpider(object):
     default_custom_setting = {}
     settings_path = None
     base_spider = None
+    common_settings_path = 'spiders.common.settings'
 
     def __init__(self, *args, **kwargs):
         self.custom_setting = kwargs.get('custom_setting', {})
@@ -154,6 +159,7 @@ class BaseSyncSpider(object):
         kwargs['custom_setting'] = self.custom_setting
         kwargs['name'] = self.name
         kwargs['settings_path'] = self.settings_path
+        kwargs['common_settings_path'] = self.common_settings_path
 
         if not kwargs.get('init_spider'):
             self.init_spider = InitSpider(*args, **kwargs)
@@ -415,7 +421,7 @@ class SyncSpider(BaseSyncSpider):
         super().__init__(*args, **kwargs)
 
         self.consumer_thread_num = self.settings['CONSUMER_THREAD_NUM'] or 10
-        self.spider_queue = Queue(100)
+        self.spider_queue = Queue(1000)
 
     def start_spider(self):
         raise NotImplementedError

@@ -33,12 +33,6 @@ class ${SpiderName}Spider(SyncSpider):
         title = response.re.findall('<title>(.*?)</title>')
         self.logger.info(f'title: {title}')
 
-        data = {'title': title[0]}
-
-        # 调用 pipeline 处理数据，返回 True or False
-        pip_res = self.pipeline(data)
-        print('pip_res: ', pip_res)
-
 
 if __name__ == '__main__':
     run_spider(${SpiderName}Spider)
