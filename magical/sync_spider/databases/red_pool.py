@@ -29,9 +29,9 @@ class RedisBase(redis.StrictRedis):
 
     def __init__(self, config):
         name = config.get('name', 'red')
-        if RedisHandler.__init.get(name):
+        if RedisBase.__init.get(name):
             return
-        RedisHandler.__init[name] = True
+        RedisBase.__init[name] = True
 
         new_config = copy.deepcopy(config)
 

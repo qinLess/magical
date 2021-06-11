@@ -10,7 +10,7 @@
     Desc: 
 """
 
-from magical.utils import load_objects
+from magical.utils import load_objects, load_files
 from magical.sync_spider.core.start_spider import run_spider, run_thread_spider
 from magical.sync_spider.http.request import Request
 from magical.sync_spider.core.spider import SyncSpider, ThreadSyncSpider, RedisMessageMQSpider, RabbitMessageMQSpider

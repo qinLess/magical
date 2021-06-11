@@ -24,7 +24,7 @@ class DownloaderMiddleware(object):
         self.proxy = spider.proxy
         self.logger = spider.logger
         self.settings = spider.settings
-        self.duplicate = spider.duplicate
+        # self.duplicate = spider.duplicate
         self.max_retry_count = spider.settings.get_int("RETRY_COUNT")
         self.retry_status_codes = spider.settings.get_list("RETRY_STATUS_CODES")
 

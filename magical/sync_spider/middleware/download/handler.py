@@ -62,6 +62,7 @@ class DownloadHandler(object):
             response = session.post(
                 url,
                 data=request.data,
+                json=request.json,
                 headers=request.headers,
                 params=request.params,
                 proxies=meta.get('proxy'),

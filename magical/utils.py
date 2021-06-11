@@ -2,7 +2,7 @@
 """
 -------------------------------------------------
     Author: qinLess
-    File: utils.py
+    File: goods_utils.py
     Time: 2021/4/20 上午12:31
 -------------------------------------------------
     Change Activity: 2021/4/20 上午12:31
@@ -33,6 +33,12 @@ def log_path(project_path):
         return log_path(os.path.dirname(project_path))
 
 
+# 加载 py 文件
+def load_files(path):
+    return import_module(path)
+
+
+# 加载模块类函数
 def load_objects(path):
     try:
         dot = path.rindex('.')

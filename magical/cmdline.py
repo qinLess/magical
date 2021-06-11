@@ -22,7 +22,6 @@ TEMPLATES_TO_RENDER = [
     ('${spider_name}', 'spiders', '__init__.py.tmpl'),
     ('${spider_name}', 'base_spider.py.tmpl'),
     ('${spider_name}', 'middleware.py.tmpl'),
-    ('${spider_name}', 'pipeline.py.tmpl'),
     ('${spider_name}', 'settings.py.tmpl')
 ]
 
@@ -83,6 +82,7 @@ def generate_spider_project(spider_type, project_path=None, spider_name=None):
     s_path = abspath(project_path).split('/')
     spider_path = '.'.join(s_path[s_path.index('spiders'):])
     settings_path = spider_path + '.settings'
+    project_name = s_path[s_path.index('spiders') + 1]
 
     TEMPLATES_TO_RENDER.append(('${spider_name}', 'spiders', f'{spider_name}.py.tmpl'))
 
@@ -93,6 +93,7 @@ def generate_spider_project(spider_type, project_path=None, spider_name=None):
 
         render_template_file(
             tpl_file,
+            project_name=project_name,
             settings_path=settings_path,
             spider_path=spider_path,
             spider_name=spider_name,

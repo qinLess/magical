@@ -18,6 +18,7 @@ class Response(object):
         self.response = response
         self.request = request
 
+        self.meta = request.meta
         self.url = response.url
         self.status = response.status_code
         self.text = response.text

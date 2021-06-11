@@ -16,6 +16,9 @@ from magical.utils import log_path
 
 # -------------------------------------------------------------------------------------------------------------------
 
+# 项目名称
+PROJECT_NAME = '${project_name}'
+
 # logger 路径
 LOGGER_PATH = log_path(__file__)
 
@@ -23,16 +26,17 @@ LOGGER_PATH = log_path(__file__)
 RETRY_COUNT = 10
 
 # 管道中间件，可配置多个
-PIPELINE_MIDDLEWARE_PATH = {
-    "${spider_path}.pipeline.${SpiderName}Pipeline": 10
-}
+# PIPELINE_MIDDLEWARE_PATH = {
+#     "${spider_path}.pipeline.${SpiderName}Pipeline": 10
+# }
 
 # 下载中间件，可配置多个
 DOWNLOAD_MIDDLEWARE_PATH = {
     # "${spider_path}.middleware.DuplicateMiddleware": 7,
     # "${spider_path}.middleware.HeadersMiddleware": 8,
     # "${spider_path}.middleware.ProxyMiddleware": 9,
-    "${spider_path}.middleware.${SpiderName}Middleware": 10
+    "${spider_path}.middleware.RequestErrorMiddleware": 10,
+    "${spider_path}.middleware.${SpiderName}Middleware": 100
 }
 
 # 爬虫公共类，基类
@@ -62,16 +66,16 @@ DOWNLOAD_MIDDLEWARE_MANAGER_PATH = "magical.sync_spider.middleware.download.mana
 # -------------------------------------------------------------------------------------------------------------------
 
 # 管道处理中间件
-PIPELINE_HANDLER_PATH = "magical.sync_spider.middleware.pipeline.handler.PipelineHandler"
+# PIPELINE_HANDLER_PATH = "magical.sync_spider.middleware.pipeline.handler.PipelineHandler"
 
 # 管道调度器
-PIPELINE_MIDDLEWARE_MANAGER_PATH = "magical.sync_spider.middleware.pipeline.manager.PipelineMiddlewareManager"
+# PIPELINE_MIDDLEWARE_MANAGER_PATH = "magical.sync_spider.middleware.pipeline.manager.PipelineMiddlewareManager"
 
 # 管道中间件，可配置多个
 # PIPELINE_MIDDLEWARE_PATH = {}
 
 # -------------------------------------------------------------------------------------------------------------------
-
+# 暂时不使用，存在问题
 # # 去重中间件
 # FILTER_DUPLICATE_HANDLER = "magical.sync_spider.middleware.duplicate.handler.DuplicateHandler"
 #

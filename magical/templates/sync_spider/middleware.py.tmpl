@@ -20,30 +20,6 @@ from magical.sync_spider.extends_module.base_module.downloader import Downloader
 # ------------------------------------------------default middleware------------------------------------------------
 
 
-class DuplicateMiddleware(DownloaderMiddleware):
-    """去重中间件"""
-
-    def __init__(self, spider):
-        super().__init__(spider)
-
-    def process_request(self, request):
-        if request.meta.get('is_filter'):
-            # 0 == 不存在，1 == 存在
-            if self.duplicate.get(**request.meta['filter_info']) != 0:
-                return None
-
-        return request
-
-    def process_response(self, request, response):
-
-        if response and request.meta.get('is_filter'):
-            # 请求成功添加到，去重种子列表里。 0 == 已存在，1 == 不存在，添加成功
-            if self.duplicate.add(**request.meta['filter_info']) == 1:
-                pass
-
-        return response
-
-
 class HeadersMiddleware(DownloaderMiddleware):
     """请求头处理中间件"""
 
@@ -87,16 +63,41 @@ class ProxyMiddleware(DownloaderMiddleware):
             self.proxy.proxy_handler(request, num=1)
             return self._retry(request)
 
+        return exception
+
+
+class RequestErrorMiddleware(DownloaderMiddleware):
+    """请求异常中间件"""
+
+    def __init__(self, spider):
+        super().__init__(spider)
+
+    def process_exception(self, request, exception):
+        self.logger.error(f'RequestErrorMiddleware.process_exception: {exception}, request: {request}', exc_info=True)
+
+        if isinstance(
+                exception,
+                (
+                        requests.exceptions.ConnectionError,
+                        requests.exceptions.ConnectTimeout,
+                        requests.exceptions.ReadTimeout,
+                        requests.exceptions.Timeout,
+                )
+        ):
+            self.logger.error(f'RequestErrorMiddleware - 请求异常重试 - request: {request}')
+            time.sleep(random.randint(3, 5))
+            return self._retry(request)
+
         elif isinstance(exception, requests.exceptions.HTTPError):
-            self.logger.error(f'ProxyMiddleware - requests.exceptions.HTTPError - request: {request}')
+            self.logger.error(f'RequestErrorMiddleware - requests.exceptions.HTTPError - request: {request}')
             return None
 
         elif isinstance(exception, requests.exceptions.ChunkedEncodingError):
-            self.logger.error(f'ProxyMiddleware - requests.exceptions.ChunkedEncodingError - request: {request}')
+            self.logger.error(f'RequestErrorMiddleware - requests.exceptions.ChunkedEncodingError - request: {request}')
             return None
 
         elif isinstance(exception, requests.exceptions.SSLError):
-            self.logger.error(f'ProxyMiddleware - requests.exceptions.SSLError - request: {request}')
+            self.logger.error(f'RequestErrorMiddleware - requests.exceptions.SSLError - request: {request}')
             return None
 
         return exception

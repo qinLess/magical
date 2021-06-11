@@ -41,6 +41,7 @@ class InitSpider(object):
         self.name = kwargs.get('name', self.name)
         self.custom_setting = kwargs.get('custom_setting', {})
         self.settings_path = kwargs.get('settings_path')
+        self.common_settings_path = kwargs.get('common_settings_path')
 
         self.__load_settings(self.custom_setting)
 
@@ -62,8 +63,11 @@ class InitSpider(object):
         self.settings = Settings()
         self.settings.set_dict(custom_setting)
         if self.settings_path:
-            custom_settings = importlib.import_module(self.settings_path)
-            self.settings.load_config(custom_settings)
+            try:
+                self.settings.load_config(importlib.import_module(self.common_settings_path))
+            except Exception as e:
+                pass
+            self.settings.load_config(importlib.import_module(self.settings_path))
 
     def __load_dbs(self):
         self.dbs = InitDatabase(self).dbs
@@ -146,6 +150,7 @@ class BaseSyncSpider(object):
     default_custom_setting = {}
     settings_path = None
     base_spider = None
+    common_settings_path = 'spiders.common.settings'
 
     def __init__(self, *args, **kwargs):
         self.custom_setting = kwargs.get('custom_setting', {})
@@ -154,6 +159,7 @@ class BaseSyncSpider(object):
         kwargs['custom_setting'] = self.custom_setting
         kwargs['name'] = self.name
         kwargs['settings_path'] = self.settings_path
+        kwargs['common_settings_path'] = self.common_settings_path
 
         if not kwargs.get('init_spider'):
             self.init_spider = InitSpider(*args, **kwargs)
@@ -197,7 +203,9 @@ class BaseSyncSpider(object):
         response = self.download_cls.fetch(request)
         return response
 
-    def download(self, request: Request) -> Response:
+    def download(self, request: Request = None, **kwargs) -> Response:
+        if not isinstance(request, Request):
+            request = Request(**kwargs)
         try:
             response = self.__download(request)
         except AttributeError as exc:
@@ -415,7 +423,7 @@ class SyncSpider(BaseSyncSpider):
         super().__init__(*args, **kwargs)
 
         self.consumer_thread_num = self.settings['CONSUMER_THREAD_NUM'] or 10
-        self.spider_queue = Queue(100)
+        self.spider_queue = Queue(1000)
 
     def start_spider(self):
         raise NotImplementedError
@@ -465,9 +473,11 @@ class SyncSpider(BaseSyncSpider):
         t.start()
         return t
 
-    def __consumer(self, func):
+    def __consumer(self, func, queue):
+        spider_queue = queue if queue else self.spider_queue
+
         while True:
-            msg = self.spider_queue.get()
+            msg = spider_queue.get()
             try:
                 self.logger.info(f'spider_queue.msg: {msg}')
                 func(msg)
@@ -475,11 +485,11 @@ class SyncSpider(BaseSyncSpider):
             except Exception as e:
                 self.logger.exception(e)
 
-            self.spider_queue.task_done()
+            spider_queue.task_done()
 
-    def consumer(self, func, thread_num=None):
+    def consumer(self, func, thread_num=None, queue=None):
         for index in range(thread_num or self.consumer_thread_num):
-            consumer_thread = threading.Thread(target=self.__consumer, args=(func,))
+            consumer_thread = threading.Thread(target=self.__consumer, args=(func, queue))
             consumer_thread.daemon = True
             consumer_thread.start()
 

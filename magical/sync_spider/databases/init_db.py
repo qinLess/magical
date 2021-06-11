@@ -65,7 +65,7 @@ class InitDatabase(object):
             for pgc in self.post_gre_config:
                 self.__set_dict(pgc["name"], self.sql_handler(config=pgc, spider=self.spider))
         else:
-            self.logger.info('未添加 sql 配置')
+            self.logger.info('未添加 post gre sql 配置')
             self.__set_dict('post_gre')
 
         # mysql
