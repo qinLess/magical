@@ -15,7 +15,7 @@ from urllib.parse import urlencode
 
 class Request(object):
     def __init__(self, url, params=None, method='GET', data={}, headers={}, meta={},
-                 json=None, encoding='utf-8', use_middleware=True, **kwargs):
+                 json=None, encoding='utf-8', use_middleware=True, session=True, **kwargs):
         self.url = url
         self.data = data
         self.json = json
@@ -23,13 +23,15 @@ class Request(object):
         self.method = method
         self.encoding = encoding
         self.headers = headers
+        self.session = session
         self.use_middleware = use_middleware
         self.kwargs = kwargs
 
         self.meta = self._load_meta(meta)
 
     def copy(self, *args, **kwargs):
-        for key in ['url', 'method', 'data', 'json', 'params', 'headers', 'meta', 'use_middleware']:
+        keys = ['url', 'method', 'data', 'json', 'params', 'headers', 'meta', 'session', 'use_middleware']
+        for key in keys:
             kwargs.setdefault(key, getattr(self, key))
         cls = kwargs.pop('cls', self.__class__)
         return cls(*args, **kwargs)

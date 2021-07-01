@@ -39,7 +39,6 @@ if __name__ == '__main__':
     main()
 ```
 
-
 ## Spider
 ```python
 from magical.sync_spider import run_spider, SyncSpider, Request
@@ -211,6 +210,7 @@ import requests
 from magical.sync_spider.extends_module.base_module.downloader import DownloaderMiddleware
 
 
+# 效果不好，不推荐使用
 class DuplicateMiddleware(DownloaderMiddleware):
     """去重中间件"""
 
@@ -349,5 +349,8 @@ class TestSpiderPipeline(PipelineMiddleware):
 
         return exception
 ```
+
+# 2021-07-01 更新
+## 添加自定义公用组件，详情可查看，spiders 示例
 
 # 持续更新中······

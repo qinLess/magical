@@ -100,7 +100,7 @@ REDIS_HANDLER = 'magical.sync_spider.databases.red_pool.RedisHandler'
 
 # 代理IP中间件
 # redis IP 获取
-PROXY_HANDLER = 'magical.sync_spider.common.proxy_handler.GetRedisProxy'
+# PROXY_HANDLER = 'magical.sync_spider.common.proxy_handler.GetRedisProxy'
 # # 芝麻代理 IP
 # PROXY_HANDLER = 'magical.sync_spider.common.proxy_handler.GetZhiMaProxy'
 

@@ -479,7 +479,7 @@ class SyncSpider(BaseSyncSpider):
         while True:
             msg = spider_queue.get()
             try:
-                self.logger.info(f'spider_queue.msg: {msg}')
+                # self.logger.info(f'spider_queue.msg: {msg}')
                 func(msg)
 
             except Exception as e:

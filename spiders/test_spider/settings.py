@@ -3,9 +3,9 @@
 -------------------------------------------------
     Author: qinLess
     File: settings.py
-    Time: ${create_time}
+    Time: 2021/01/01 11:40:25
 -------------------------------------------------
-    Change Activity: ${create_time}
+    Change Activity: 2021/01/01 11:40:25
 -------------------------------------------------
     Desc:
 """
@@ -17,7 +17,7 @@ from magical.utils import log_path
 # -------------------------------------------------------------------------------------------------------------------
 
 # 项目名称
-PROJECT_NAME = '${project_name}'
+PROJECT_NAME = 'test_spider'
 
 # logger 路径
 LOGGER_PATH = log_path(__file__)
@@ -27,20 +27,20 @@ RETRY_COUNT = 10
 
 # 管道中间件，可配置多个
 # PIPELINE_MIDDLEWARE_PATH = {
-#     "${spider_path}.pipeline.${SpiderName}Pipeline": 10
+#     "spiders.test_spider.pipeline.TestExcelPipeline": 10
 # }
 
 # 下载中间件，可配置多个
 DOWNLOAD_MIDDLEWARE_PATH = {
-    # "${spider_path}.middleware.DuplicateMiddleware": 7,
-    # "${spider_path}.middleware.HeadersMiddleware": 8,
-    # "${spider_path}.middleware.ProxyMiddleware": 9,
-    "${spider_path}.middleware.RequestErrorMiddleware": 10,
-    "${spider_path}.middleware.${SpiderName}Middleware": 100
+    # "spiders.test_spider.middleware.DuplicateMiddleware": 7,
+    # "spiders.test_spider.middleware.HeadersMiddleware": 8,
+    # "spiders.test_spider.middleware.ProxyMiddleware": 9,
+    "spiders.test_spider.middleware.RequestErrorMiddleware": 10,
+    "spiders.test_spider.middleware.TestExcelMiddleware": 100
 }
 
 # 爬虫公共类，基类
-BASE_SPIDER_PATH = "${spider_path}.base_spider.${SpiderName}BaseSpider"
+BASE_SPIDER_PATH = "spiders.test_spider.base_spider.TestExcelBaseSpider"
 
 # user-agent
 UA = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) ' \

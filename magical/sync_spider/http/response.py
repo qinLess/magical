@@ -25,6 +25,10 @@ class Response(object):
         self.headers = response.headers
         self.cookies = response.cookies
 
+    def set_encoding(self, encoding):
+        self.response.encoding = encoding
+        self.text = self.response.text
+
     def json(self):
         try:
             return self.response.json()

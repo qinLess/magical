@@ -28,21 +28,7 @@ class DownloadHandler(object):
         self.kwargs = kwargs
         self.logger = spider.logger
         self.settings = spider.settings
-
-        self.session_map = {}
-
-    def __get_session(self, url):
-        """获取session
-
-        Args:
-            url: 请求url
-        Returns:
-            session 对象
-        """
-        netloc = urlparse(url).netloc
-        session = self.session_map.get(netloc, requests.session())
-        self.session_map[netloc] = session
-        return session
+        self.session = requests.session()
 
     def fetch(self, request):
         """开始下载
@@ -52,30 +38,31 @@ class DownloadHandler(object):
         Returns:
             response 对象
         """
-        url = request.url
-        meta = request.meta
 
-        session = request.meta.get('session', self.__get_session(url))
-        meta['session'] = session
+        if request.session:
+            instance = self.session
+
+        else:
+            instance = requests
 
         if request.method == 'POST':
-            response = session.post(
-                url,
+            response = instance.post(
+                request.url,
                 data=request.data,
                 json=request.json,
                 headers=request.headers,
                 params=request.params,
-                proxies=meta.get('proxy'),
+                proxies=request.meta.get('proxy'),
                 verify=self.settings['REQUEST_VERIFY'],
                 timeout=self.settings['REQUEST_TIMEOUT'],
                 **request.kwargs
             )
         else:
-            response = session.get(
-                url,
+            response = instance.get(
+                request.url,
                 headers=request.headers,
                 params=request.params,
-                proxies=meta.get('proxy'),
+                proxies=request.meta.get('proxy'),
                 verify=self.settings['REQUEST_VERIFY'],
                 timeout=self.settings['REQUEST_TIMEOUT'],
                 **request.kwargs
@@ -85,5 +72,5 @@ class DownloadHandler(object):
 
         res = Response(response, request)
 
-        self.logger.info(f"Downloaded ({res.status}) {str(request)}")
+        self.logger.debug(f"Downloaded ({res.status}) {str(request)}")
         return res
