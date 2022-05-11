@@ -1,0 +1,10 @@
+test
+__pycache__
+.idea
+.DS_Store
+logs
+captcha
+file
+*.egg-info
+build
+dist
